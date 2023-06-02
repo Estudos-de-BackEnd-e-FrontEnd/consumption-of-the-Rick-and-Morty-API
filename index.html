@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Site para conhecer os personagens do Ricky and Morty">
+    <link rel="stylesheet" type="text/css" href="src/css/reset.css">
+    <link rel="stylesheet" type="text/css" href="src/css/style.css">
+    <title>Rick and Morty App</title>
+</head>
+<body>
+    <header class="header-home">
+        <figure class="header-home__image">
+            <img class="header-home__image-content" src="/src/img/logo.svg" alt="logo do Ricky and Morty">
+        </figure>
+        <div class="header-home__menu">
+            <h1 class="header-home__menu-title">API de Rick and Morty</h1>
+            <div class="header-home__menu-search">
+                <input type="text" id="header-home__menu-search__input" placeholder="Pesquise" name="header-home__search">
+                <img id="header-home__menu-search__icone" src="src/img/icon-search.svg" alt="">
+            </div>
+
+        </div>
+    </header>
+
+    <main class="main-home">
+        <section class="main-home__container">
+            <section id="main-home__container-cards">
+                
+            </section>
+        </section>
+        
+        <section class="main-home__pagination">
+            <div id="main-home__pagination-container"></div>
+            <img class="main-home__pagination-portal-img" src="/src/img/rick-and-morty-portal.png" alt="">
+        </section>
+    </main>
+    
+    <footer class="footer-home">
+        <div id="footer-home__info">
+        </div>
+        <p class="footer-home__copyright">Desenvolvido por:<span> Lucas Paulus </span>em 2023</p>
+    </footer>
+    <script type="module" src="src/app.js"></script>
+</body>
+</html>
