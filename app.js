@@ -2,11 +2,11 @@ import axios from "https://cdn.skypack.dev/axios"
 const section = document.getElementById('main-home__container-cards')
 const paginationContainter = document.getElementById('main-home__pagination-container')
 const footerInfo = document.getElementById("footer-home__info")
+
 const listAllcharacters = async (page)=>{
-    const response = await axios.get(`https://rickandmortyapi.com/api/character/?page=${page}`)
+    const response = await axios.get(`https://rickandmortyapi.com/api/character/?page=${page?page:1}`)
     const data = response.data
-    return  data
-   
+    return data
 }
 
 function groupThePages(pages, group){
@@ -24,26 +24,15 @@ function groupThePages(pages, group){
         
         groupPages.push(array)
     }
-
     return groupPages
-
 }
-
-
-/*     const dataLimitTo6 = []
-    for(let items of data){
-        if(dataLimitTo6.length < 6){
-            dataLimitTo6.push(items)
-        }
-    }
-   */
 
 const characterEpisode = async (locationUrl)=>{
     const response = await axios.get(`${locationUrl}`)
     
     return response.data.name
 }
- 
+
 const cardRender = async (pages) =>{
     section.innerHTML = ""
     
@@ -59,24 +48,22 @@ const cardRender = async (pages) =>{
 
     const resolvePromisses = Promise.all(CharacterEpisodePromisses)
     const data = await resolvePromisses
-    console.log(data)
     cardTemplate(data)
-    
 
     return character.info.pages
-  
-
 }
-let cards =  await cardRender(1)
-const arrayBtns = groupThePages(cards, 5)
+
+let pages = await cardRender()
+const arrayBtns = groupThePages(pages, 5)
+
 const btnBack = document.createElement("button")
 const btnForward = document.createElement("button")
 const btns = document.createElement("div")
-/* const btnContainer = document.createElement("div") */
 
 btnBack.classList.add("main-home__pagination-controller__btn")
 btnForward.classList.add("main-home__pagination-controller__btn")
 btns.classList.add("main-home__pagination-controller__btn")
+
 btnBack.innerText = "Anterior"
 btnForward.innerText = "Próximo"
 
@@ -84,19 +71,24 @@ paginationContainter.appendChild(btnBack)
 paginationContainter.appendChild(btns)
 paginationContainter.appendChild(btnForward)
 
-let counter = 0
+let groupCounter = 0
+let pageCounter = 1
 
 function createBtns(counter){
     let array = []
     for(let i = 0; i < arrayBtns[counter].length ; i++){
         const btn = document.createElement("button")
-        
+    
         btn.setAttribute("id", `${arrayBtns[counter][i]}`)
         btn.innerText = `${arrayBtns[counter][i]}`
         btn.classList.add("controller__btn--length")
         btns.appendChild(btn)
         array.push(btn)
-
+        
+        if(array[0].getAttribute("id") == 1){
+            array[0].setAttribute("disabled", true)
+        }
+         
         btn.addEventListener("click", (e)=>{
             
             for(let i = 0; i < array.length; i++){
@@ -107,38 +99,71 @@ function createBtns(counter){
             let btnCurrent = document.getElementById(`${e.target.id}`)
             
             btnCurrent.setAttribute("disabled", true)
-           
-            console.log(btnCurrent)
-            cardRender(arrayBtns[counter][i])
+            cardRender(e.target.id)
+            pageCounter = e.target.id
+
         })
     }
-
     return true
 }
 
-createBtns(counter)
-btnBack.addEventListener("click", (e)=>{
-    //console.log(e.target)
-    console.log(counter)
-    if(counter >= 1){
-        counter--
-    }
- 
-    btns.innerHTML = ""
-    createBtns(counter)
+createBtns(groupCounter)
 
+btnForward.addEventListener("click", ()=>{
+    if(pageCounter % 5 === 0 && pageCounter !== 0){
+        btns.innerHTML = ""
+        groupCounter++
+        createBtns(groupCounter)     
+    }
+    
+    if(pageCounter < pages){
+        pageCounter++
+        console.log("forward após counter",pageCounter)
+        cardRender(pageCounter)
+        
+        let btnCurrent = document.getElementById(`${pageCounter}`)
+       
+        let btnPrev = document.getElementById(`${pageCounter - 1}`)
+    
+        btnCurrent.setAttribute("disabled", true)
+        if(btnPrev){
+            btnPrev.removeAttribute("disabled")
+        }  
+    }
 })
 
-btnForward.addEventListener("click", (e)=>{
+btnBack.addEventListener("click", ()=>{
+    let group = groupThePages(42,5)
 
-    console.log(counter)
-    if(counter < arrayBtns.length - 1){
-        counter++
+    if(pageCounter == group[groupCounter][0]){
+        btns.innerHTML = ""
+        if(groupCounter > 0){
+            groupCounter--
+        }
+        
+        createBtns(groupCounter)
     }
- 
-    btns.innerHTML = ""
-    createBtns(counter)
-    //console.log(arrayBtns[0])
+    if(pageCounter > 1){
+        pageCounter--
+        console.log("back depois do counter", pageCounter)
+        cardRender(pageCounter)
+         
+        let btn1 = document.getElementById("1")
+        if(btn1){
+            btn1.removeAttribute("disabled")
+        }
+  
+        let btnCurrent = document.getElementById(`${pageCounter}`)
+        console.log(btnCurrent)
+        if(btnCurrent){
+            btnCurrent.setAttribute("disabled", true)
+        }
+        
+        let btnPrev = document.getElementById(`${pageCounter + 1}`)
+        if(btnPrev){
+            btnPrev.removeAttribute("disabled")
+        }
+    }
 })
 
 function cardStatus(status){
@@ -158,7 +183,7 @@ function cardTemplate(data){
     data.map((item, index)=>{
         const {image, name, status, species, location} = item.character
         const {episode} = item 
-        console.log(index)
+
         section.innerHTML +=`
       
         <div class="card">
@@ -188,9 +213,7 @@ async function setfooterInfo(){
     const characters = await axios.get("https://rickandmortyapi.com/api/character")
     const locations = await  axios.get("https://rickandmortyapi.com/api/location")
     const episodes = await axios.get("https://rickandmortyapi.com/api/episode")
-
-    console.log(characters.data.info.count, locations.data.info.count, episodes.data.info.count)
-    
+   
     const characterParagraph = document.createElement("p")
     const locationParagraph = document.createElement("p")
     const episodeParagraph = document.createElement("p")

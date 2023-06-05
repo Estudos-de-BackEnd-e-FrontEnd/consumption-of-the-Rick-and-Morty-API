@@ -105,6 +105,7 @@ body{
     border: none;
     cursor: pointer;
 }
+
 .main-home__pagination-portal-img{
     width: 100%;
     max-width: 360px;
@@ -140,23 +141,6 @@ span{
     color: #f7faf6;
     
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 .circle{
     display: inline-block;
     width: 8px;
